@@ -1,3 +1,11 @@
+######################
+# Made by MilkJug
+# Last Updated on: 6/2/2021
+# Repo Forked From BuckarewBanzai
+# Uses OpenCV
+#
+######################
+
 import cv2
 
 # Source data : Video File
