@@ -1,10 +1,9 @@
-######################
+#######################
 # Made by MilkJug
 # Last Updated on: 6/2/2021
 # Repo Forked From BuckarewBanzai
-# Uses OpenCV and yolov3
-#
-######################
+# Uses OpenCV, Numpy, YOLOv3
+#######################
 
 import cv2
 import numpy as np
