@@ -1,38 +1,75 @@
-# import the opencv library
 import cv2
 
+# Source data : Video File
+IP_file = 'Road3.mp4'
 
-# Source data
-img_file = "C:\\Users\Milk\\Documents\\program\\person.jpeg"
+# Read the source video file
+vid_file = cv2.VideoCapture(IP_file)
 
-# create an openCV image 
-img = cv2.imread(img_file)
-
-person_classifier = "C:\\Users\\Milk\\Documents\\program\\haarcascade_person.xml"
-# cup_classifier = 'file_name.xml' if you can find a cup.xml file
-
-# convert color image to grey image '
-grey_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-# create trackers using classifiers using OpenCV
-person_tracker = (cv2.data.haarcascades + person_classifier)
-# cup_tracker = cv2.CascadeClassifier(cup_classifier)
-
-# detect objects
-person = person_tracker.detectMultiScale(gray_img)
-# cup = cup_tracker.detectMultiScale(gray_img)
-
-# Display the coordinates of different objects - multi dimensional array   
-print(person)
-
-# draw rectangles around the objects.
-for (x, y, w, h) in person:
-    cv2.rectangle(img, (x,y), (x+w, y+h), (0,255,0), 2)
-    cv2.putText(img, 'Person', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255,0), 2)
-# Just copy this blerb of code above and change the 2 'person' tags to a different object
-cv2.imshow('my dection', img)
-
-# wait for the keystroke to exit before
-cv2.waitKey()
+# pre trained classifiers
+car_classifier = 'cars.xml'
+pedestrian_classifier = 'pedestrian.xml'
+bus_classifier = 'Bus_front.xml'
+twowheeler_classifier = 'two_wheeler.xml'
 
 
+# Classified Trackers
+car_tracker = cv2.CascadeClassifier(car_classifier)
+pedestrian_tracker = cv2.CascadeClassifier(pedestrian_classifier)
+bus_tracker = cv2.CascadeClassifier(bus_classifier)
+twowheeler_tracker = cv2.CascadeClassifier(twowheeler_classifier)
+
+
+while True:
+    # start reading video file frame by frame like an image
+    (read_successful, frame) = vid_file.read()
+
+    if read_successful:
+        #convert to grey scale image
+        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    else:
+        break
+
+    # Detect Cars, Pedestrians, Bus and 2Wheelers
+    cars = car_tracker.detectMultiScale(gray_frame,1.1,9)
+    pedestrians = pedestrian_tracker.detectMultiScale(gray_frame,1.1,9)
+    bus = bus_tracker.detectMultiScale(gray_frame, 1.1, 9)
+    twowheeler = twowheeler_tracker.detectMultiScale(gray_frame, 1.1, 9)
+
+
+    # Draw rectangle around the cars
+    for (x, y, w, h) in cars:
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        cv2.putText(frame, 'Car', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+        #cv2.rectangle(gray_frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+
+    # Draw square around the pedestrians
+    for (x, y, w, h) in pedestrians:
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        cv2.putText(frame, 'Human', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
+    # Draw square around the bus
+    for (x, y, w, h) in bus:
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+        cv2.putText(frame, 'Bus', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
+    # Draw square around the twowheeler
+    for (x, y, w, h) in twowheeler:
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (216, 255, 0), 2)
+        cv2.putText(frame, 'Bike', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
+
+    # display the imapge with the face spotted
+    cv2.imshow('Detect Objects On Road',frame)
+
+    # capture key
+    key = cv2.waitKey(1)
+
+    # Stop incase Esc is pressed
+    if key == 27:
+        break
+
+# Release video capture object
+vid_file.release()
+
+print("That's it...")
