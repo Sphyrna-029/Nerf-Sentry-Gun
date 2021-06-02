@@ -75,5 +75,5 @@ RELAY_PIN = 22
 #######################
 ```
 
-These will be located at the top of the file. Use `vim gun.py` to open the file. Press `i` to edit.
+These will be located at the top of the file. Use `vim gun.py` or `nano gun.py` to open the file. Press `i` to edit.
 Once you've made your changes, press `esc` then `ZZ` to save.
