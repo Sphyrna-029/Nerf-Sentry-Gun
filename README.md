@@ -36,7 +36,7 @@ workon cv
 Clone this repository
 
 ```
-git clone git@github.com:waterbottle-123/Nerf-Sentry-Gun
+git clone github.com:waterbottle-123/Nerf-Sentry-Gun
 ```
 
 Navigate to the directory
