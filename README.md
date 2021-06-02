@@ -4,7 +4,7 @@ Forked from BuckarewBanzai
 
 Uses OpenCv, Numpy, and Yolov3
 
-Download Yolov3 (Make sure to download YOLOv3-320 since it was built on this!)
+Download Yolov3 weights since the file is way too big to put in the repo (Make sure to download YOLOv3-320 weights since it was built on this!)
 https://pjreddie.com/darknet/yolo/
 
 
