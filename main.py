@@ -15,17 +15,14 @@ IP_file = 'Road3.mp4'
 vid_file = cv2.VideoCapture(IP_file)
 
 # pre trained classifiers
-car_classifier = 'cars.xml'
-pedestrian_classifier = 'pedestrian.xml'
-bus_classifier = 'Bus_front.xml'
-twowheeler_classifier = 'two_wheeler.xml'
+cup_classifier = 'cup.xml'
+human_classifier = 'human.xml'
+
 
 
 # Classified Trackers
-car_tracker = cv2.CascadeClassifier(car_classifier)
-pedestrian_tracker = cv2.CascadeClassifier(pedestrian_classifier)
-bus_tracker = cv2.CascadeClassifier(bus_classifier)
-twowheeler_tracker = cv2.CascadeClassifier(twowheeler_classifier)
+cup_tracker = cv2.CascadeClassifier(car_classifier)
+human_tracker = cv2.CascadeClassifier(human_classifier)
 
 
 while True:
@@ -39,36 +36,23 @@ while True:
         break
 
     # Detect Cars, Pedestrians, Bus and 2Wheelers
-    cars = car_tracker.detectMultiScale(gray_frame,1.1,9)
-    pedestrians = pedestrian_tracker.detectMultiScale(gray_frame,1.1,9)
-    bus = bus_tracker.detectMultiScale(gray_frame, 1.1, 9)
-    twowheeler = twowheeler_tracker.detectMultiScale(gray_frame, 1.1, 9)
-
+    cup = cup_tracker.detectMultiScale(gray_frame,1.1,9)
+    human = human_tracker.detectMultiScale(gray_frame,1.1,9)
+   
 
     # Draw rectangle around the cars
-    for (x, y, w, h) in cars:
+    for (x, y, w, h) in cup:
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
-        cv2.putText(frame, 'Car', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+        cv2.putText(frame, 'Cup', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
         #cv2.rectangle(gray_frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
     # Draw square around the pedestrians
-    for (x, y, w, h) in pedestrians:
+    for (x, y, w, h) in human:
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
         cv2.putText(frame, 'Human', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
-    # Draw square around the bus
-    for (x, y, w, h) in bus:
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
-        cv2.putText(frame, 'Bus', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-
-    # Draw square around the twowheeler
-    for (x, y, w, h) in twowheeler:
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (216, 255, 0), 2)
-        cv2.putText(frame, 'Bike', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-
-
     # display the imapge with the face spotted
-    cv2.imshow('Detect Objects On Road',frame)
+    cv2.imshow('Detect Objects ',frame)
 
     # capture key
     key = cv2.waitKey(1)
