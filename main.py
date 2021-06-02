@@ -2,66 +2,70 @@
 # Made by MilkJug
 # Last Updated on: 6/2/2021
 # Repo Forked From BuckarewBanzai
-# Uses OpenCV
+# Uses OpenCV and yolov3
 #
 ######################
 
 import cv2
+import numpy as np
 
-# Source data : Video File
-IP_file = 'Road3.mp4'
+net = cv2.dnn.readNet('yolov3.weights', 'yolov3.cfg')
+classes = []
+with open('coco.names', 'r') as f:
+    classes = f.read().splitlines()
 
-# Read the source video file
-vid_file = cv2.VideoCapture(IP_file)
-
-# pre trained classifiers
-cup_classifier = 'cup.xml'
-human_classifier = 'human.xml'
-
-
-
-# Classified Trackers
-cup_tracker = cv2.CascadeClassifier(car_classifier)
-human_tracker = cv2.CascadeClassifier(human_classifier)
-
+cap = cv2.VideoCapture('0')
+#img = cv2.imread('image.jpg')
 
 while True:
-    # start reading video file frame by frame like an image
-    (read_successful, frame) = vid_file.read()
+    _, img = cap.read()
+    height, width, _ = img.shape
+     
+    blob = cv2.dnn.blobFromImage(img, 1/255, (416, 416), (0,0,0), swapRB=True, crop=False)
+    net.setInput(blob)
+    output_layers_names = net.getUnconnectedOutputLayerNames()
+    layerOutputs = net.forward(output_layers_names)
 
-    if read_successful:
-        #convert to grey scale image
-        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    else:
-        break
+    boxes = []
+    confidences = []
+    class_ids = []
 
-    # Detect Cars, Pedestrians, Bus and 2Wheelers
-    cup = cup_tracker.detectMultiScale(gray_frame,1.1,9)
-    human = human_tracker.detectMultiScale(gray_frame,1.1,9)
-   
+    for output in layerOutputs:
+        for detection in output:
+            scores = detection[5:]
+            class_id = np.argmax(scores)
+            confidence = score[class_id]
+            if confidence > 0.5:
+                center_x = int(detection[0]*width)
+                center_y = int(detection[1]*height)
+                w = int(detection[2]*width)
+                h = int(detection[3]*height)
 
-    # Draw rectangle around the cars
-    for (x, y, w, h) in cup:
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
-        cv2.putText(frame, 'Cup', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-        #cv2.rectangle(gray_frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+                x = int(center_x - w/2)
+                y = int(center_y - h/2)
 
-    # Draw square around the pedestrians
-    for (x, y, w, h) in human:
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-        cv2.putText(frame, 'Human', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
-    # display the imapge with the face spotted
-    cv2.imshow('Detect Objects ',frame)
+                boxes.append([x, y, w, h])
+                confidence.append((float(confidence)))
+                class_ids.append(class_id)
 
-    # capture key
+    print(len(boxes))
+    indexes = cv2.dnn.NMSBoxes(boxes, confidence, 0.5, 0.4)
+
+    font = cv2.FONT_HERSHEY_PLAIN
+    colors = np.random.uniform(0, 255, size=(len(boxes),3))
+
+    for i in indexes.flatten():
+        x, y, w, h = boxes[i]
+        label = str(classes[class_ids[i]])
+        confidence = str(round(confidences[i], 2))
+        color = colors [i]
+        cv2.rectangle(img, (x,y), (x+w, y+h), color, 2)
+        cv2.putText(img, label + " " + confidence, (x, y+20), font, 2, (255,255,255), 2)
+    cv2.imshow('Image', img)
     key = cv2.waitKey(1)
-
-    # Stop incase Esc is pressed
-    if key == 27:
+    if key==27:
         break
 
-# Release video capture object
-vid_file.release()
-
-print("That's it...")
+cap.release()
+cv2.destroyAllWindows()
