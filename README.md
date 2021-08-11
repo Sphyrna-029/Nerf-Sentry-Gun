@@ -9,6 +9,7 @@ Download Yolov3 weights since the file is way too big to put in the repo (Make s
 
 
 I will try to see if this works on a raspberry pi 4, so that you can build a Nerf sentry gun
+You will need a motor board that works with the adafruit motor libary 
 
 below this text is all you need to do for gun.py to work
 ```bash  
